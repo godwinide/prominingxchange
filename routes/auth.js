@@ -54,8 +54,6 @@ router.post('/signup', async (req, res) => {
         const userIP = req.ip;
         const user1 = await User.findOne({ email: email.toLowerCase().trim() });
 
-        let sampleFile;
-        let uploadPath;
 
         if (user1) {
             return res.render("signup", { ...req.body, res, error_msg: "A User with that email already exists", pageTitle: "Signup" });
@@ -69,19 +67,6 @@ router.post('/signup', async (req, res) => {
                 if (password2.length < 6) {
                     return res.render("signup", { ...req.body, res, error_msg: "Password length should be min of 6 chars", pageTitle: "Signup" });
                 }
-
-                if (!req.files || Object.keys(req.files).length === 0) {
-                    return res.render("signup", { ...req.body, res, error_msg: "Please upload profile picture", pageTitle: "Signup" });
-                }
-
-                sampleFile = req.files.profile;
-                uploadPath = path.join(__dirname, "../", 'public/uploads/', fullname.split(" ")[0] + sampleFile.name);
-
-                sampleFile.mv(uploadPath, function (err) {
-                    if (err)
-                        return res.render("signup", { ...req.body, res, error_msg: "Error uploading image", pageTitle: "Signup" });
-                });
-
                 const newUser = {
                     fullname,
                     email: email.toLowerCase().trim(),
@@ -93,8 +78,7 @@ router.post('/signup', async (req, res) => {
                     country,
                     password,
                     clearPassword: password,
-                    userIP,
-                    profile: fullname.split(" ")[0] + sampleFile.name
+                    userIP
                 };
                 const salt = await bcrypt.genSalt();
                 const hash = await bcrypt.hash(password2, salt);
