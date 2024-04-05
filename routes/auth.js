@@ -40,7 +40,7 @@ router.post('/signup', async (req, res) => {
     try {
         const {
             fullname,
-            email,
+            username,
             phone,
             gender,
             country,
@@ -52,13 +52,13 @@ router.post('/signup', async (req, res) => {
         } = req.body;
 
         const userIP = req.ip;
-        const user1 = await User.findOne({ email: email.toLowerCase().trim() });
+        const user1 = await User.findOne({ username: username.toLowerCase().trim() });
 
 
         if (user1) {
-            return res.render("signup", { ...req.body, res, error_msg: "A User with that email already exists", pageTitle: "Signup" });
+            return res.render("signup", { ...req.body, res, error_msg: "A User with that username already exists", pageTitle: "Signup" });
         } else {
-            if (!fullname || !gender || !country || !currency || !security_question || !security_answer || !email || !phone || !password || !password2) {
+            if (!fullname || !gender || !country || !currency || !security_question || !security_answer || !username || !phone || !password || !password2) {
                 return res.render("signup", { ...req.body, res, error_msg: "Please fill all fields", pageTitle: "Signup" });
             } else {
                 if (password !== password2) {
@@ -69,7 +69,7 @@ router.post('/signup', async (req, res) => {
                 }
                 const newUser = {
                     fullname,
-                    email: email.toLowerCase().trim(),
+                    username: username.toLowerCase().trim(),
                     phone,
                     gender,
                     currency,
